@@ -12,10 +12,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/go-redis/redis/v8/internal"
-	"github.com/go-redis/redis/v8/internal/hashtag"
-	"github.com/go-redis/redis/v8/internal/pool"
-	"github.com/go-redis/redis/v8/internal/proto"
+	"github.com/perimeterx/redis/v8/internal"
+	"github.com/perimeterx/redis/v8/internal/hashtag"
+	"github.com/perimeterx/redis/v8/internal/pool"
+	"github.com/perimeterx/redis/v8/internal/proto"
 	"golang.org/x/exp/rand"
 )
 
