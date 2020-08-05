@@ -5,6 +5,7 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200624174652-8d2f3be8b2d9
 	github.com/onsi/ginkgo v1.10.1
 	github.com/onsi/gomega v1.7.0
+	github.com/sony/gobreaker v0.4.1 // indirect
 	go.opentelemetry.io/otel v0.7.0
 	golang.org/x/exp v0.0.0-20200513190911-00229845015e
 	golang.org/x/net v0.0.0-20190923162816-aa69164e4478 // indirect

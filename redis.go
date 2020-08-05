@@ -8,6 +8,7 @@ import (
 	"github.com/go-redis/redis/v8/internal"
 	"github.com/go-redis/redis/v8/internal/pool"
 	"github.com/go-redis/redis/v8/internal/proto"
+	"github.com/sony/gobreaker"
 )
 
 // Nil reply returned by Redis when key does not exist.
@@ -139,14 +140,20 @@ func (hs hooks) processTxPipeline(
 type baseClient struct {
 	opt      *Options
 	connPool pool.Pooler
+	breaker  *gobreaker.CircuitBreaker
 
 	onClose func() error // hook called when client is closed
 }
 
 func newBaseClient(opt *Options, connPool pool.Pooler) *baseClient {
+	var breaker *gobreaker.CircuitBreaker
+	if opt.CircuitBreakerSetting != nil {
+		breaker = gobreaker.NewCircuitBreaker(*opt.CircuitBreakerSetting)
+	}
 	return &baseClient{
 		opt:      opt,
 		connPool: connPool,
+		breaker:  breaker,
 	}
 }
 
@@ -304,6 +311,16 @@ func (c *baseClient) withConn(
 }
 
 func (c *baseClient) process(ctx context.Context, cmd Cmder) error {
+	if c.breaker != nil {
+		_, err := c.breaker.Execute(func() (interface{}, error) {
+			return nil, c.processAndSetError(ctx, cmd)
+		})
+		return err
+	}
+	return c.processAndSetError(ctx, cmd)
+}
+
+func (c *baseClient) processAndSetError(ctx context.Context, cmd Cmder) error {
 	err := c._process(ctx, cmd)
 	if err != nil {
 		cmd.SetErr(err)

@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"github.com/sony/gobreaker"
 	"net"
 	"net/url"
 	"runtime"
@@ -107,6 +108,10 @@ type Options struct {
 
 	// Limiter interface used to implemented circuit breaker or rate limiter.
 	Limiter Limiter
+
+	// CircuitBreakerSetting optional settings for a circuit breaker for the client.
+	// When nil, no circuit breaker is set.
+	CircuitBreakerSetting *gobreaker.Settings
 }
 
 func (opt *Options) init() {
